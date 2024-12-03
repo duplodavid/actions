@@ -4,6 +4,8 @@ on:
 jobs:
   run-k8s-job:
     runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: /tmp/kubeconfig
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
@@ -13,11 +15,8 @@ jobs:
         chmod +x ./kubectl
         sudo mv ./kubectl /usr/local/bin/kubectl
     - name: Set up Kubeconfig
-      env:
-        KUBECONFIG: /tmp/kubeconfig
       run: |
         echo "${{ secrets.KUBECONFIG }}" | base64 -d > /tmp/kubeconfig
-        export KUBECONFIG=/tmp/kubeconfig
     - name: Check if Kubeconfig was Set
       if: success()
       run: |
