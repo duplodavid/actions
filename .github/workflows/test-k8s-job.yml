@@ -8,7 +8,7 @@ jobs:
       KUBECONFIG: /tmp/kubeconfig
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Install kubectl
       run: |
         curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -17,18 +17,6 @@ jobs:
     - name: Set up Kubeconfig
       run: |
         echo "${{ secrets.KUBECONFIG }}" | base64 -d > /tmp/kubeconfig
-    - name: Check if Kubeconfig was Set
-      if: success()
-      run: |
-          if [ -s /tmp/kubeconfig ]; then
-            echo "Kubeconfig successfully set. Path: ${KUBECONFIG}"
-          else
-            echo "Kubeconfig not found!"
-            exit 1
-          fi
-    - name: Create Namespace
-      run: |
-        kubectl create namespace test-namespace || echo "Namespace already exists"
     - name: Build Job
       run: |
         cat <<EOF > job.yaml
@@ -36,7 +24,7 @@ jobs:
         kind: Job
         metadata:
           name: my-job
-          namespace: test-namespace
+          namespace: duploservices-dev01
         spec:
           backoffLimit: 4
           parallelism: 1
