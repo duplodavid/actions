@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: my-job
+  namespace: default
+spec:
+  backoffLimit: 4
+  parallelism: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: my-container
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        args: ["echo Hello Kubernetes"]
