@@ -18,6 +18,15 @@ jobs:
       run: |
         echo "${{ secrets.KUBECONFIG }}" | base64 -d > /tmp/kubeconfig
         export KUBECONFIG=/tmp/kubeconfig
+    - name: Check if Kubeconfig was Set
+      if: success()
+      run: |
+          if [ -s /tmp/kubeconfig ]; then
+            echo "Kubeconfig successfully set."
+          else
+            echo "Kubeconfig not found!"
+            exit 1
+          fi
     - name: Create Namespace
       run: |
         kubectl create namespace test-namespace || echo "Namespace already exists"
