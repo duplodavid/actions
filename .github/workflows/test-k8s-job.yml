@@ -17,11 +17,11 @@ jobs:
         KUBECONFIG: /tmp/kubeconfig
       run: |
         echo "${{ secrets.KUBECONFIG }}" | base64 -d > /tmp/kubeconfig
+        export KUBECONFIG=/tmp/kubeconfig
     - name: Create Namespace
       run: |
         kubectl create namespace test-namespace || echo "Namespace already exists"
     - name: Build Job
-      shell: bash
       run: |
         cat <<EOF > job.yaml
         apiVersion: batch/v1
