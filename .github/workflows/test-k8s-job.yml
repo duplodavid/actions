@@ -7,6 +7,19 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
+    - name: Install kubectl
+      run: |
+        curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x ./kubectl
+        sudo mv ./kubectl /usr/local/bin/kubectl
+    - name: Set up Kubeconfig
+      env:
+        KUBECONFIG: /tmp/kubeconfig
+      run: |
+        echo "${{ secrets.KUBECONFIG }}" | base64 -d > /tmp/kubeconfig
+    - name: Create Namespace
+      run: |
+        kubectl create namespace test-namespace || echo "Namespace already exists"
     - name: Build Job
       shell: bash
       run: |
