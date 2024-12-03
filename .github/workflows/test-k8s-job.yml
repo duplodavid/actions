@@ -1,0 +1,41 @@
+name: Test K8s Job Delay
+on: 
+  push
+jobs:
+  run-k8s-job:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    - name: Build Job
+      shell: bash
+      run: |
+        cat <<EOF > job.yaml
+        apiVersion: batch/v1
+        kind: Job
+        metadata:
+          name: my-job
+          namespace: test-namespace
+        spec:
+          backoffLimit: 4
+          parallelism: 1
+          template:
+            spec:
+              restartPolicy: Never
+              containers:
+              - name: app
+                image: alpine:latest
+                command:
+                - /bin/sh
+                - -c
+                args:
+                - |
+                  sleep 10
+                  echo "Hello World, I'm in Kubernetes!"
+        EOF
+    - name: Apply and Watch with Delay
+      uses: duplocloud/actions/k8s-job@DUPLO-26057-k8s-job-gha-persistence
+      with:
+        file: job.yaml
+        timeout: 300s
+        cleanup_delay: 30  # Testing cleanup delay feature
