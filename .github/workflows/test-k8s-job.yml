@@ -22,7 +22,7 @@ jobs:
       if: success()
       run: |
           if [ -s /tmp/kubeconfig ]; then
-            echo "Kubeconfig successfully set."
+            echo "Kubeconfig successfully set. Path: ${KUBECONFIG}"
           else
             echo "Kubeconfig not found!"
             exit 1
